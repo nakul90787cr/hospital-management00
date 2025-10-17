@@ -22,6 +22,7 @@ import UpcomingAppointments from "../components/dashboard/UpcomingAppointments";
 import MolecularPattern from "../components/medical/MolecularPattern";
 import DNAHelix from "../components/medical/DNAHelix";
 import HolographicOverlay from "../components/medical/HolographicOverlay";
+import { ShaderAnimation } from "../components/ui/shader-animation.js";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -91,42 +92,53 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-indigo-50 via-violet-50 to-cyan-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900">
       <MolecularPattern className="opacity-30" />
-      
-      <div className="relative z-10 p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Hero Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-4 mb-4">
+
+      {/* Shader Animation Hero Section */}
+      <div className="relative h-64 md:h-80 mb-8 overflow-hidden rounded-b-3xl">
+        <div className="absolute inset-0 opacity-40">
+          <ShaderAnimation />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-indigo-50 dark:to-gray-900" />
+
+        {/* Hero Header with Shader Background */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative z-10 h-full flex items-center justify-center p-4 md:p-8"
+        >
+          <div className="max-w-5xl w-full">
+            <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
               <motion.div
-                className="w-16 h-16 rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-500 to-cyan-500 p-[2px] shadow-2xl"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-500 to-cyan-500 p-[2px] shadow-2xl"
                 animate={{
                   boxShadow: [
-                    "0 0 20px rgba(99, 102, 241, 0.3)",
-                    "0 0 40px rgba(139, 92, 246, 0.4)",
-                    "0 0 20px rgba(99, 102, 241, 0.3)"
+                    "0 0 30px rgba(99, 102, 241, 0.5)",
+                    "0 0 60px rgba(139, 92, 246, 0.6)",
+                    "0 0 30px rgba(99, 102, 241, 0.5)"
                   ]
                 }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                <div className="w-full h-full rounded-3xl bg-white dark:bg-gray-900 flex items-center justify-center">
-                  <Activity className="w-8 h-8 text-violet-600" />
+                <div className="w-full h-full rounded-3xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm flex items-center justify-center">
+                  <Activity className="w-10 h-10 md:w-12 md:h-12 text-violet-600" />
                 </div>
               </motion.div>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 bg-clip-text text-transparent">
+              <div className="flex-1">
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent drop-shadow-lg">
                   Welcome back, {user.full_name}
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-500" />
+                <p className="text-white/90 dark:text-gray-200 mt-2 flex items-center justify-center md:justify-start gap-2 text-lg">
+                  <Zap className="w-5 h-5 text-amber-400" />
                   Advanced Healthcare Command Center
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
+      </div>
+
+      <div className="relative z-10 p-4 md:p-8">
+        <div className="max-w-7xl mx-auto">
 
           {/* Stats Grid */}
           <motion.div
