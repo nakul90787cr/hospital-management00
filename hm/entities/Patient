@@ -1,0 +1,59 @@
+{
+  "name": "Patient",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Patient's full name"
+    },
+    "age": {
+      "type": "number",
+      "description": "Patient's age"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "Male",
+        "Female",
+        "Other"
+      ],
+      "description": "Patient's gender"
+    },
+    "disease": {
+      "type": "string",
+      "description": "Primary disease or condition"
+    },
+    "contact": {
+      "type": "string",
+      "description": "Contact number"
+    },
+    "medications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of prescribed medications",
+      "default": []
+    },
+    "managing_doctor": {
+      "type": "string",
+      "description": "Name of the managing doctor"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Discharged",
+        "Under Treatment"
+      ],
+      "default": "Active"
+    }
+  },
+  "required": [
+    "name",
+    "age",
+    "gender",
+    "disease",
+    "contact"
+  ]
+}

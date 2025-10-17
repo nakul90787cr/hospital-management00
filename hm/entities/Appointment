@@ -1,0 +1,60 @@
+{
+  "name": "Appointment",
+  "type": "object",
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "description": "ID of the patient"
+    },
+    "patient_name": {
+      "type": "string",
+      "description": "Name of the patient"
+    },
+    "doctor_name": {
+      "type": "string",
+      "description": "Name of the doctor"
+    },
+    "department": {
+      "type": "string",
+      "enum": [
+        "Cardiology",
+        "Neurology",
+        "Orthopedics",
+        "Pediatrics",
+        "General Medicine",
+        "Emergency",
+        "Surgery"
+      ],
+      "description": "Department"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Appointment date"
+    },
+    "time": {
+      "type": "string",
+      "description": "Appointment time (HH:MM format)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Scheduled",
+        "Completed",
+        "Cancelled"
+      ],
+      "default": "Scheduled"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "patient_id",
+    "patient_name",
+    "doctor_name",
+    "date",
+    "time"
+  ]
+}

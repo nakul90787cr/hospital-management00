@@ -1,0 +1,201 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { base44 } from "@/api/base44Client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { User, Phone, Activity, Calendar, Stethoscope, Pill, Edit, Trash2, X, Plus } from "lucide-react";
+import { format } from "date-fns";
+
+export default function PatientDetails({ patient, onEdit, onDelete, onClose, canModify, userRole }) {
+  const [addingMedication, setAddingMedication] = useState(false);
+  const [newMedication, setNewMedication] = useState("");
+  const queryClient = useQueryClient();
+
+  const updatePatientMutation = useMutation({
+    mutationFn: ({ id, patientData }) => base44.entities.Patient.update(id, patientData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patients'] });
+      setAddingMedication(false);
+      setNewMedication("");
+    },
+  });
+
+  const handleAddMedication = () => {
+    if (newMedication.trim()) {
+      const updatedMedications = [...(patient.medications || []), newMedication.trim()];
+      updatePatientMutation.mutate({
+        id: patient.id,
+        patientData: { ...patient, medications: updatedMedications }
+      });
+    }
+  };
+
+  const statusColors = {
+    Active: "bg-green-100 text-green-800 border-green-200",
+    Discharged: "bg-gray-100 text-gray-800 border-gray-200",
+    "Under Treatment": "bg-blue-100 text-blue-800 border-blue-200"
+  };
+
+  const canAddMedications = userRole === "Doctor" || userRole === "Nurse";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+    >
+      <Card className="border-none shadow-lg sticky top-4">
+        <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-green-50">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl font-bold">Patient Details</CardTitle>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6 space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-2xl">
+                {patient.name?.charAt(0) || 'P'}
+              </span>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">{patient.name}</h2>
+              <Badge className={`${statusColors[patient.status]} border mt-2`}>
+                {patient.status}
+              </Badge>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-gray-700">
+              <User className="w-5 h-5 text-gray-400" />
+              <div>
+                <p className="text-xs text-gray-500">Age & Gender</p>
+                <p className="font-medium">{patient.age} years • {patient.gender}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 text-gray-700">
+              <Phone className="w-5 h-5 text-gray-400" />
+              <div>
+                <p className="text-xs text-gray-500">Contact</p>
+                <p className="font-medium">{patient.contact}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 text-gray-700">
+              <Activity className="w-5 h-5 text-gray-400 mt-1" />
+              <div>
+                <p className="text-xs text-gray-500">Disease / Condition</p>
+                <p className="font-medium">{patient.disease}</p>
+              </div>
+            </div>
+
+            {patient.managing_doctor && (
+              <div className="flex items-center gap-3 text-gray-700">
+                <Stethoscope className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-xs text-gray-500">Managing Doctor</p>
+                  <p className="font-medium">Dr. {patient.managing_doctor}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 text-gray-700">
+              <Calendar className="w-5 h-5 text-gray-400" />
+              <div>
+                <p className="text-xs text-gray-500">Registered</p>
+                <p className="font-medium">{format(new Date(patient.created_date), "MMM d, yyyy")}</p>
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Pill className="w-5 h-5 text-gray-400" />
+                <h3 className="font-semibold text-gray-900">Medications</h3>
+              </div>
+              {canAddMedications && !addingMedication && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAddingMedication(true)}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add
+                </Button>
+              )}
+            </div>
+
+            {addingMedication && (
+              <div className="flex gap-2 mb-3">
+                <Input
+                  value={newMedication}
+                  onChange={(e) => setNewMedication(e.target.value)}
+                  placeholder="Enter medication name"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddMedication()}
+                />
+                <Button onClick={handleAddMedication} size="sm">
+                  Add
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setAddingMedication(false);
+                    setNewMedication("");
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+
+            {patient.medications && patient.medications.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {patient.medications.map((med, index) => (
+                  <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
+                    {med}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">No medications prescribed</p>
+            )}
+          </div>
+        </CardContent>
+        {canModify && (
+          <CardFooter className="flex gap-3 border-t bg-gray-50 p-6">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => onEdit(patient)}
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+              onClick={() => onDelete(patient)}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete
+            </Button>
+          </CardFooter>
+        )}
+      </Card>
+    </motion.div>
+  );
+}

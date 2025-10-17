@@ -1,0 +1,91 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+
+export default function DNAHelix({ className = "" }) {
+  return (
+    <div className={`relative ${className}`}>
+      <svg viewBox="0 0 100 100" className="w-full h-full">
+        <defs>
+          <linearGradient id="dnaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#8b5cf6" />
+            <stop offset="100%" stopColor="#06b6d4" />
+          </linearGradient>
+        </defs>
+        
+        {[0, 1, 2, 3, 4].map((i) => (
+          <g key={i}>
+            <motion.circle
+              cx="30"
+              cy={20 + i * 15}
+              r="3"
+              fill="url(#dnaGradient)"
+              initial={{ scale: 0.8, opacity: 0.5 }}
+              animate={{ 
+                scale: [0.8, 1.2, 0.8],
+                opacity: [0.5, 1, 0.5]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: i * 0.2
+              }}
+            />
+            <motion.circle
+              cx="70"
+              cy={20 + i * 15}
+              r="3"
+              fill="url(#dnaGradient)"
+              initial={{ scale: 0.8, opacity: 0.5 }}
+              animate={{ 
+                scale: [0.8, 1.2, 0.8],
+                opacity: [0.5, 1, 0.5]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: i * 0.2 + 0.1
+              }}
+            />
+            <motion.line
+              x1="30"
+              y1={20 + i * 15}
+              x2="70"
+              y2={20 + i * 15}
+              stroke="url(#dnaGradient)"
+              strokeWidth="1"
+              strokeOpacity="0.3"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: [0, 1, 0] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: i * 0.2
+              }}
+            />
+          </g>
+        ))}
+        
+        <motion.path
+          d="M 30,20 Q 50,35 70,35 Q 50,50 30,50 Q 50,65 70,80"
+          fill="none"
+          stroke="url(#dnaGradient)"
+          strokeWidth="2"
+          strokeOpacity="0.4"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+        <motion.path
+          d="M 70,20 Q 50,35 30,35 Q 50,50 70,50 Q 50,65 30,80"
+          fill="none"
+          stroke="url(#dnaGradient)"
+          strokeWidth="2"
+          strokeOpacity="0.4"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+      </svg>
+    </div>
+  );
+}

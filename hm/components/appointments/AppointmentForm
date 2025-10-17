@@ -1,0 +1,174 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Save, XCircle } from "lucide-react";
+
+export default function AppointmentForm({ appointment, patients, onSubmit, onCancel }) {
+  const [formData, setFormData] = useState(appointment || {
+    patient_id: "",
+    patient_name: "",
+    doctor_name: "",
+    department: "General Medicine",
+    date: "",
+    time: "",
+    status: "Scheduled",
+    notes: ""
+  });
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePatientChange = (patientId) => {
+    const selectedPatient = patients.find(p => p.id === patientId);
+    setFormData(prev => ({
+      ...prev,
+      patient_id: patientId,
+      patient_name: selectedPatient?.name || ""
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="mb-6"
+    >
+      <Card className="border-none shadow-lg">
+        <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-green-50">
+          <CardTitle className="text-xl font-bold">
+            {appointment ? 'Edit Appointment' : 'Schedule New Appointment'}
+          </CardTitle>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="p-6 space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="patient">Patient *</Label>
+                <Select
+                  value={formData.patient_id}
+                  onValueChange={handlePatientChange}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select patient" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {patients.map((patient) => (
+                      <SelectItem key={patient.id} value={patient.id}>
+                        {patient.name} - {patient.disease}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="doctor_name">Doctor Name *</Label>
+                <Input
+                  id="doctor_name"
+                  value={formData.doctor_name}
+                  onChange={(e) => handleChange('doctor_name', e.target.value)}
+                  placeholder="Enter doctor name"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="department">Department *</Label>
+                <Select
+                  value={formData.department}
+                  onValueChange={(value) => handleChange('department', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Cardiology">Cardiology</SelectItem>
+                    <SelectItem value="Neurology">Neurology</SelectItem>
+                    <SelectItem value="Orthopedics">Orthopedics</SelectItem>
+                    <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                    <SelectItem value="General Medicine">General Medicine</SelectItem>
+                    <SelectItem value="Emergency">Emergency</SelectItem>
+                    <SelectItem value="Surgery">Surgery</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleChange('status', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Scheduled">Scheduled</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="date">Date *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => handleChange('date', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="time">Time *</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={formData.time}
+                  onChange={(e) => handleChange('time', e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Additional Notes</Label>
+              <Textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => handleChange('notes', e.target.value)}
+                placeholder="Any additional notes or instructions"
+                className="h-24"
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end gap-3 border-t bg-gray-50 p-6">
+            <Button type="button" variant="outline" onClick={onCancel}>
+              <XCircle className="w-4 h-4 mr-2" />
+              Cancel
+            </Button>
+            <Button type="submit" className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600">
+              <Save className="w-4 h-4 mr-2" />
+              {appointment ? 'Update Appointment' : 'Schedule Appointment'}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
+    </motion.div>
+  );
+}

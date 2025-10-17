@@ -1,0 +1,62 @@
+import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Filter } from "lucide-react";
+
+export default function AppointmentFilters({ filters, onFilterChange }) {
+  const handleChange = (key, value) => {
+    onFilterChange({ ...filters, [key]: value });
+  };
+
+  return (
+    <Card className="mb-6 border-none shadow-md">
+      <CardContent className="p-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-medium text-gray-700">Filters:</span>
+          </div>
+
+          <Select value={filters.status} onValueChange={(value) => handleChange("status", value)}>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="Scheduled">Scheduled</SelectItem>
+              <SelectItem value="Completed">Completed</SelectItem>
+              <SelectItem value="Cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filters.department} onValueChange={(value) => handleChange("department", value)}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Departments</SelectItem>
+              <SelectItem value="Cardiology">Cardiology</SelectItem>
+              <SelectItem value="Neurology">Neurology</SelectItem>
+              <SelectItem value="Orthopedics">Orthopedics</SelectItem>
+              <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+              <SelectItem value="General Medicine">General Medicine</SelectItem>
+              <SelectItem value="Emergency">Emergency</SelectItem>
+              <SelectItem value="Surgery">Surgery</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filters.date} onValueChange={(value) => handleChange("date", value)}>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Date" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Dates</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="upcoming">Upcoming</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
